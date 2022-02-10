@@ -13,10 +13,10 @@ def get_model(num_dim_x, num_dim_control, w_lb, use_cuda = False):
     controller = NeuralC3MController(
         state_dim=4,
         action_dim=2,
-        goal_point=torch.tensor([[0., 0., 0., 0.5]]),
-        u_eq=torch.tensor([0., 0.]),
-        state_std=1 / np.sqrt(12) * (torch.tensor([2., 2., 2 * np.pi, 1.]) - torch.tensor([-2., -2., -2 * np.pi, 0.])),
-        ctrl_std=1 / np.sqrt(12) * (torch.tensor([2., 0.3]) - torch.tensor([-2., -0.3])),
+        goal_point=torch.tensor([[0., 0., 0., 0.5]], device=device),
+        u_eq=torch.tensor([0., 0.], device=device),
+        state_std=1 / np.sqrt(12) * (torch.tensor([2., 2., 2 * np.pi, 1.], device=device) - torch.tensor([-2., -2., -2 * np.pi, 0.], device=device)),
+        ctrl_std=1 / np.sqrt(12) * (torch.tensor([2., 0.3], device=device) - torch.tensor([-2., -0.3], device=device)),
     ).to(device)
     W_func = controller.W
     u_func = controller.u
