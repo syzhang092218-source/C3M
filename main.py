@@ -138,7 +138,7 @@ K = 1024
 def loss_pos_matrix_random_sampling(A):
     # A: bs x d x d
     # z: K x d
-    z = torch.randn(K, A.size(-1)).cuda()
+    z = torch.randn(K, A.size(-1)).type_as(A)
     z = z / z.norm(dim=1, keepdim=True)
     zTAz = (z.matmul(A) * z.view(1,K,-1)).sum(dim=2).view(-1)
     negative_index = zTAz.detach().cpu().numpy() < 0
@@ -206,7 +206,8 @@ def forward(x, xref, uref, _lambda, verbose=False, acc=False, detach=False):
     else:
         return loss, None, None, None
 
-optimizer = torch.optim.Adam(list(model_W.parameters()) + list(model_Wbot.parameters()) + list(model_u_w1.parameters()) + list(model_u_w2.parameters()), lr=args.learning_rate)
+# optimizer = torch.optim.Adam(list(model_W.parameters()) + list(model_Wbot.parameters()) + list(model_u_w1.parameters()) + list(model_u_w2.parameters()), lr=args.learning_rate)
+optimizer = torch.optim.Adam(list(model_W.parameters()) + list(model_u_w1.parameters()) + list(model_u_w2.parameters()), lr=args.learning_rate)
 
 def trainval(X, bs=args.bs, train=True, _lambda=args._lambda, acc=False, detach=False): # trainval a set of x
     # torch.autograd.set_detect_anomaly(True)
@@ -279,5 +280,7 @@ for epoch in range(args.epochs):
         best_acc = p1 + p2
         filename = args.log+'/model_best.pth.tar'
         filename_controller = args.log+'/controller_best.pth.tar'
-        torch.save({'args':args, 'precs':(loss, p1, p2), 'model_W': model_W.state_dict(), 'model_Wbot': model_Wbot.state_dict(), 'model_u_w1': model_u_w1.state_dict(), 'model_u_w2': model_u_w2.state_dict()}, filename)
+        # torch.save({'args':args, 'precs':(loss, p1, p2), 'model_W': model_W.state_dict(), 'model_Wbot': model_Wbot.state_dict(), 'model_u_w1': model_u_w1.state_dict(), 'model_u_w2': model_u_w2.state_dict()}, filename)
+        torch.save({'args':args, 'precs':(loss, p1, p2), 'model_W': model_W.state_dict(), 'model_u_w1': model_u_w1.state_dict(), 'model_u_w2': model_u_w2.state_dict()}, filename)
+
         torch.save(u_func, filename_controller)
