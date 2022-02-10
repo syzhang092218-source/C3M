@@ -22,7 +22,7 @@ def get_model(num_dim_x, num_dim_control, w_lb, use_cuda = False):
     u_func = controller.u
     return controller._W, 0, controller.controller.w1, controller.controller.w2, W_func, u_func
 
-effective_dim_start = 2
+effective_dim_start = 2 
 effective_dim_end = 4
 
 # class U_FUNC(nn.Module):
