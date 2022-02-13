@@ -45,10 +45,10 @@ class NeuralTrackingController(Controller):
         if x_ref.ndim == 3:
             x_ref = x_ref.squeeze(-1)
 
-        # x_trans = self.normalize_state(x)
-        # x_ref_trans = self.normalize_state(x_ref)
-        x_trans = x
-        x_ref_trans = x_ref
+        x_trans = self.normalize_state(x)
+        x_ref_trans = self.normalize_state(x_ref)
+        # x_trans = x
+        # x_ref_trans = x_ref
 
         bs = x_trans.shape[0]
         x_in = torch.cat((x_trans, x_ref_trans), dim=1)
@@ -59,8 +59,8 @@ class NeuralTrackingController(Controller):
 
         u = torch.bmm(w2, torch.tanh(torch.bmm(w1, x_error.unsqueeze(-1)))).squeeze(-1)
 
-        # return self.de_normalize_action(u).unsqueeze(-1) + u_ref
-        return u.unsqueeze(-1) + u_ref
+        return self.de_normalize_action(u).unsqueeze(-1) + u_ref
+        # return u.unsqueeze(-1) + u_ref
 
     def act(self, x: torch.Tensor) -> torch.Tensor:
         raise NotImplementedError
@@ -71,10 +71,10 @@ class NeuralTrackingController(Controller):
         if x_ref.ndim == 3:
             x_ref = x_ref.squeeze(-1)
 
-        # x_trans = self.normalize_state(x)
-        # x_ref_trans = self.normalize_state(x_ref)
-        x_trans = x
-        x_ref_trans = x_ref
+        x_trans = self.normalize_state(x)
+        x_ref_trans = self.normalize_state(x_ref)
+        # x_trans = x
+        # x_ref_trans = x_ref
 
         bs = x_trans.shape[0]
         x_in = torch.cat((x_trans, x_ref_trans), dim=1)
@@ -86,5 +86,5 @@ class NeuralTrackingController(Controller):
 
             u = torch.bmm(w2, torch.tanh(torch.bmm(w1, x_error.unsqueeze(-1)))).squeeze(-1)
 
-        # return self.de_normalize_action(u) + u_ref
-        return u.unsqueeze(-1) + u_ref
+        return self.de_normalize_action(u) + u_ref
+        # return u.unsqueeze(-1) + u_ref

@@ -64,7 +64,8 @@ class NeuralC3MController(Controller):
         bs = x.shape[0]
         if x.ndim == 3:
             x = x.squeeze(-1)
-        x_trans = self.normalize_state(x)
+        # x_trans = self.normalize_state(x)
+        x_trans = x
 
         W = self._W(x_trans).view(bs, self.state_dim, self.state_dim)
         W_sym = torch.bmm(W.transpose(1, 2), W)
