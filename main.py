@@ -1,14 +1,14 @@
-import torch
-from torch.autograd import grad
-import torch.nn.functional as F
-
+import datetime
 import importlib
-import numpy as np
-import time
-from tqdm import tqdm
-
 import os
 import sys
+import time
+
+import numpy as np
+import torch
+from torch.autograd import grad
+from tqdm import tqdm
+
 sys.path.append('systems')
 sys.path.append('configs')
 sys.path.append('models')
@@ -269,13 +269,26 @@ def adjust_learning_rate(optimizer, epoch):
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
 
+
+start_time = datetime.datetime.now()
+start_time = start_time.strftime('%Y%m%d%H%M%S')
+if not os.path.exists(os.path.join(args.log, f'{start_time}')):
+    os.mkdir(os.path.join(args.log, f'{start_time}'))
+if not os.path.exists(os.path.join(args.log, f'{start_time}', 'models')):
+    os.mkdir(os.path.join(args.log, f'{start_time}', 'models'))
+
+log = open(os.path.join(os.path.join(args.log, f'{start_time}'), 'settings.yaml'), 'w')
+log.write('env: DubinsCarTracking\n')
+log.close()
+
 for epoch in range(args.epochs):
     adjust_learning_rate(optimizer, epoch)
     loss, _, _, _ = trainval(X_tr, train=True, _lambda=args._lambda, acc=False, detach=True if epoch < args.lr_step else False)
     print("Training loss: ", loss)
     loss, p1, p2, l3 = trainval(X_te, train=False, _lambda=0., acc=True, detach=False)
     print("Epoch %d: Testing loss/p1/p2/l3: "%epoch, loss, p1, p2, l3)
-    c3m_model.save(args.log + '/c3m.pkl')
+
+    c3m_model.save(os.path.join(args.log, f'{start_time}', 'models', 'c3m.pkl'))
 
     if p1+p2 >= best_acc:
         best_acc = p1 + p2
