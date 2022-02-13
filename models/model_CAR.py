@@ -6,8 +6,6 @@ import numpy as np
 from controller.neural_c3m_controller import NeuralC3MController
 
 
-
-
 def get_model(num_dim_x, num_dim_control, w_lb, use_cuda = False):
     device = torch.device('cuda' if use_cuda else 'cpu')
     controller = NeuralC3MController(
@@ -19,8 +17,11 @@ def get_model(num_dim_x, num_dim_control, w_lb, use_cuda = False):
         ctrl_std=1 / np.sqrt(12) * (torch.tensor([2., 0.3], device=device) - torch.tensor([-2., -0.3], device=device)),
     ).to(device)
     W_func = controller.W
-    u_func = controller.u
-    return controller._W, 0, controller.controller.w1, controller.controller.w2, W_func, u_func
+
+    def u_func(x, xe, uref):
+        return controller.u(x, x - xe, uref)
+
+    return controller._W, 0, controller.controller.w1, controller.controller.w2, W_func, u_func, controller
 
 effective_dim_start = 2 
 effective_dim_end = 4
