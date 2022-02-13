@@ -28,20 +28,13 @@ class NeuralTrackingController(Controller):
             hidden_layers=hidden_layers,
             hidden_activation=nn.Tanh(),
         )
-        # self.w1 = torch.nn.Sequential(
-        #     torch.nn.Linear(2*state_dim, 128, bias=True),
-        #     torch.nn.Tanh(),
-        #     torch.nn.Linear(128, c*state_dim, bias=True))
+
         self.w2 = MLP(
             in_dim=state_dim*2,
             out_dim=c*action_dim,
             hidden_layers=hidden_layers,
             hidden_activation=nn.Tanh(),
         )
-        # self.w2 = torch.nn.Sequential(
-        #     torch.nn.Linear(2*state_dim, 128, bias=True),
-        #     torch.nn.Tanh(),
-        #     torch.nn.Linear(128, action_dim*c, bias=True))
 
         self.state_dim = state_dim
         self.action_dim = action_dim

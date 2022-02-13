@@ -43,11 +43,6 @@ class NeuralC3MController(Controller):
             hidden_layers=hidden_layers_c3m,
             hidden_activation=nn.Tanh()
         )
-        # self._W = torch.nn.Sequential(
-        #     torch.nn.Linear(state_dim, 128, bias=True),
-        #     torch.nn.Tanh(),
-        #     torch.nn.Linear(128, state_dim ** 2, bias=False)
-        # )
 
         # record params
         self.state_dim = state_dim
@@ -69,8 +64,7 @@ class NeuralC3MController(Controller):
         bs = x.shape[0]
         if x.ndim == 3:
             x = x.squeeze(-1)
-        # x_trans = self.normalize_state(x)
-        x_trans = x
+        x_trans = self.normalize_state(x)
 
         W = self._W(x_trans).view(bs, self.state_dim, self.state_dim)
         W_sym = torch.bmm(W.transpose(1, 2), W)
